@@ -7,6 +7,7 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Primitives
 open DotLiquid
+open Giraffe.HttpHandlers
 
 /// Renders a model and a template with the DotLiquid template engine and sets the HTTP response
 /// with the compiled output as well as the Content-Type HTTP header to the given value.
@@ -23,7 +24,7 @@ let dotLiquid (contentType : string) (template : string) (model : obj) =
             ctx.Response.Headers.["Content-Length"] <- bytes.Length |> string |> StringValues
             do! ctx.Response.Body.WriteAsync(bytes, 0, bytes.Length) |> Async.AwaitTask
             return Some ctx
-        }
+        } |> Async
 
 /// Reads a dotLiquid template file from disk and compiles it with the given model and sets
 /// the compiled output as well as the given contentType as the HTTP reponse.
@@ -35,8 +36,8 @@ let dotLiquidTemplate (contentType : string) (templatePath : string) (model : ob
             use stream = new FileStream(templatePath, FileMode.Open)
             use reader = new StreamReader(stream)
             let! template = reader.ReadToEndAsync() |> Async.AwaitTask
-            return! dotLiquid contentType template model ctx
-        }
+            return! dotLiquid contentType template model ctx |> toAsyncResult
+        } |> Async
 
 /// Reads a dotLiquid template file from disk and compiles it with the given model and sets
 /// the compiled output as the HTTP reponse with a Content-Type of text/html.

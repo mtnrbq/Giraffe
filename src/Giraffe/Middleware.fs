@@ -31,7 +31,7 @@ type GiraffeMiddleware (next          : RequestDelegate,
 
     member __.Invoke (ctx : HttpContext) =
         async {
-            let! result = handler ctx
+            let! result = handler ctx |> toAsyncResult
 
             let logger = loggerFactory.CreateLogger<GiraffeMiddleware>()
             if logger.IsEnabled LogLevel.Debug then
@@ -67,6 +67,7 @@ type GiraffeErrorHandlerMiddleware (next          : RequestDelegate,
                 try
                     return!
                         errorHandler ex logger ctx
+                        |> toAsyncResult
                         |> Async.Ignore
                 with ex2 ->
                     logger.LogError(EventId(0), ex,  "An unhandled exception has occurred while executing the request.")

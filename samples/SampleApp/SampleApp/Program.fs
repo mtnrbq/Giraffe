@@ -27,7 +27,6 @@ let errorHandler (ex : Exception) (logger : ILogger) (ctx : HttpContext) =
     logger.LogError(EventId(0), ex, "An unhandled exception has occurred while executing the request.")
     ctx |> (clearResponse >=> setStatusCode 500 >=> text ex.Message)
 
-
 // ---------------------------------
 // Web app
 // ---------------------------------
@@ -57,8 +56,8 @@ let loginHandler =
 
             do! ctx.Authentication.SignInAsync(authScheme, user) |> Async.AwaitTask
             
-            return! text "Successfully logged in" ctx
-        }
+            return! text "Successfully logged in" ctx |> toAsyncResult
+        } |> Async
 
 let userHandler =
     fun (ctx : HttpContext) ->
@@ -86,8 +85,8 @@ let submitCar =
     fun (ctx : HttpContext) ->
         async {
             let! car = ctx.BindModel<Car>()
-            return! json car ctx
-        }
+            return! json car ctx |> toAsyncResult
+        } |> Async
 
 let smallFileUploadHandler =
     fun (ctx : HttpContext) ->
@@ -99,7 +98,8 @@ let smallFileUploadHandler =
                     ctx.Request.Form.Files
                     |> Seq.fold (fun acc file -> sprintf "%s\n%s" acc file.FileName) ""
                     |> text) ctx
-        }
+                |> toAsyncResult
+        } |> Async
 
 let largeFileUploadHandler =
     fun (ctx : HttpContext) ->
@@ -110,7 +110,8 @@ let largeFileUploadHandler =
                 (form.Files
                 |> Seq.fold (fun acc file -> sprintf "%s\n%s" acc file.FileName) ""
                 |> text) ctx
-        }
+                |> toAsyncResult
+        } |> Async
 
 let webApp = 
     choose [

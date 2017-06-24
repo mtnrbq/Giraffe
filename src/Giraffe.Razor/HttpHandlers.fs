@@ -7,6 +7,7 @@ open Microsoft.AspNetCore.Mvc.ViewFeatures
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Primitives
 open Giraffe.Razor.Engine
+open Giraffe.HttpHandlers
 
 /// Reads a razor view from disk and compiles it with the given model and sets
 /// the compiled output as the HTTP reponse with the given contentType.
@@ -24,7 +25,7 @@ let razorView (contentType : string) (viewName : string) (model : 'T) =
                 ctx.Response.Headers.["Content-Length"] <- bytes.Length |> string |> StringValues
                 do! ctx.Response.Body.WriteAsync(bytes, 0, bytes.Length) |> Async.AwaitTask
                 return Some ctx
-        }
+        } |> Async
 
 /// Reads a razor view from disk and compiles it with the given model and sets
 /// the compiled output as the HTTP reponse with a Content-Type of text/html.

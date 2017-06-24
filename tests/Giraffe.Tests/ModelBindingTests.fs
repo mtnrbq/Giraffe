@@ -56,8 +56,8 @@ let ``bindJson test`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindJson<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = POST >=> route "/json" >=> jsonHandler
     
@@ -82,6 +82,7 @@ let ``bindJson test`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -98,8 +99,8 @@ let ``bindXml test`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindXml<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = POST >=> route "/xml" >=> xmlHandler
     
@@ -124,6 +125,7 @@ let ``bindXml test`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -140,8 +142,8 @@ let ``bindForm test`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindForm<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = POST >=> route "/form" >=> formHandler
 
@@ -168,6 +170,7 @@ let ``bindForm test`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -184,8 +187,8 @@ let ``bindQueryString test`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindQueryString<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = GET >=> route "/query" >=> queryHandler
     
@@ -202,6 +205,7 @@ let ``bindQueryString test`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -217,8 +221,8 @@ let ``bindQueryString with option property test`` () =
             async {
                 let! model = ctx.BindQueryString<ModelWithOption>()
                 Assert.Equal(expected, model)
-                return! setStatusCode 200 ctx
-            }
+                return! setStatusCode 200 ctx |> toAsyncResult
+            } |> Async
 
         let app = GET >=> route "/" >=> queryHandlerWithSome
 
@@ -231,6 +235,7 @@ let ``bindQueryString with option property test`` () =
 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
         |> ignore
 
@@ -246,8 +251,8 @@ let ``bindModel with JSON content returns correct result`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindModel<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = route "/auto" >=> autoHandler
     
@@ -274,6 +279,7 @@ let ``bindModel with JSON content returns correct result`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -290,8 +296,8 @@ let ``bindModel with XML content returns correct result`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindModel<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = route "/auto" >=> autoHandler
     
@@ -318,6 +324,7 @@ let ``bindModel with XML content returns correct result`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -334,8 +341,8 @@ let ``bindModel with FORM content returns correct result`` () =
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindModel<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = route "/auto" >=> autoHandler
     
@@ -364,6 +371,7 @@ let ``bindModel with FORM content returns correct result`` () =
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -380,8 +388,8 @@ let ``bindModel with JSON content and a specific charset returns correct result`
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindModel<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = route "/auto" >=> autoHandler
     
@@ -408,6 +416,7 @@ let ``bindModel with JSON content and a specific charset returns correct result`
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
@@ -424,8 +433,8 @@ let ``bindModel during HTTP GET request with query string returns correct result
         fun (ctx : HttpContext) -> 
             async {
                 let! model = ctx.BindModel<Customer>()
-                return! text (model.ToString()) ctx
-            }
+                return! text (model.ToString()) ctx |> toAsyncResult
+            } |> Async
 
     let app = route "/auto" >=> autoHandler
     
@@ -442,6 +451,7 @@ let ``bindModel during HTTP GET request with query string returns correct result
     let result = 
         ctx
         |> app
+        |> toAsyncResult
         |> Async.RunSynchronously
 
     match result with
