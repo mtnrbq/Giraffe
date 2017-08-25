@@ -1,0 +1,1 @@
+. .\build.ps1 -ExcludeSamples -ExcludeTests -ExcludeRazor -ExcludeDotLiquid -OnlyNetStandard
